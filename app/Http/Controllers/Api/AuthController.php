@@ -13,16 +13,7 @@ use App\Http\Requests\RegisterUserRequest;
 
 class AuthController extends Controller {
 
-    public function register(Request $req) {   
-
-        $validator = \Validator::make($req->all(), [
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:6|confirmed'
-        ]);
-
-        if ($validator->fails())
-            return response()->json(['errors' => $validator->errors()], 422);
+    public function register(RegisterUserRequest $req) {   
 
         $user = User::create([
             'name' => $req->name,
