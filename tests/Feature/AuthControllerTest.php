@@ -2,27 +2,27 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use App\Models\User;
 
-class AuthControllerTest extends TestCase
-{
-    use RefreshDatabase;
+class AuthControllerTest extends TestCase {
+    use RefreshDatabase; // This ensures that the database is reset after each test
 
-    public function testDestroy()
-    {
-        // Crear un usuario en la base de datos
-        $user = User::factory()->create();
+    public function testUserCanRegister() {
+        
+        $userData = [
+            'name' => 'John Doe',
+            'email' => 'johndoe@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ];
 
-        // Enviar una solicitud DELETE al endpoint de eliminación
-        $response = $this->deleteJson("/api/auth/delete/{$user->id}");
+        $response = $this->postJson('http://127.0.0.1:8000/api/register/', $userData);
 
-        // Verificar que la respuesta tenga el código de estado 204 (Sin contenido)
-        $response->assertStatus(204);
-
-        // Verificar que el usuario no existe en la base de datos
-        $this->assertDatabaseMissing('users', ['id' => $user->id]);
+        $response->assertStatus(201); // Ensures that the response has the code 201 (created)
+        $this->assertDatabaseHas('users', ['email' => 'johndoe@example.com']); // Verify that the user has been saved in the database
+    
     }
 }
